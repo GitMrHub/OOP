@@ -4,38 +4,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace cp3_17
 {
-
-    class Car
+    class Vegetable
     {
-
         protected string name;
         public string Name { get { return name; } set { name = value; } }
+        protected string country;
+        public string Country { get { return country; } set { country = value; } }
 
-        protected string mark;
-        public string Mark { get { return mark; } set { mark = value; } }
-
-        protected int year;
-        public int Year { get { return year; } set { year = value; } }
-
-        protected int price;
-        public int Price { get { return price; } set { price = value; } }
-
-        public Car() : this("AAAAAA", "LADA", 1978, 3000) { }
-
-        public Car(string name_, string mark_, int year_, int price_)
+        protected int season;
+        public int Season { get { return season; } set { season = value; } }
+        public Vegetable() : this("Tomato", "Ukraine", 1) { }
+        public Vegetable(string name_, string country_, int season_)
         {
-
             name = name_;
-            mark = mark_;
-            year = year_;
-            price = price_;
+            country = country_;
+            season = season_;
         }
 
         override public string ToString()
         {
-            return name + " " + mark + " " + year + " " + price + "$ "; ;
+            return name + " " + country + " " + season; ;
         }
 
         virtual public void print()
@@ -50,60 +40,53 @@ namespace ConsoleApp1
 
         public override int GetHashCode()
         {
-            return (mark.Length + name.Length + year + price);
+            return (country.Length + name.Length + season);
         }
 
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
-            Car p = obj as Car;
-            if (p as Car == null)
+            Vegetable p = obj as Vegetable;
+            if (p as Vegetable == null)
                 return false;
-            return p.name == this.name && p.mark == this.mark && p.year == this.year && p.price == this.price;
+            return p.name == this.name && p.country == this.country && p.season == this.season;
         }
 
-        public static bool operator ==(Car p1, Car p2)
+        public static bool operator ==(Vegetable p1, Vegetable p2)
         {
             return p1.Equals(p2);
         }
-        public static bool operator !=(Car p1, Car p2)
+        public static bool operator !=(Vegetable p1, Vegetable p2)
         {
             return !p1.Equals(p2);
         }
     }
 
-
-
-    class Transportation : Car, IComparable
+    class Consignment : Vegetable, IComparable
     {
-        int price_2;
-        public int Price_2 { get { return price_2; } set { price_2 = value; } }
-        int time;
-        public int Time { get { return time; } set { time = value; } }
-        protected string number;
-        public string Number { get { return number; } set { number = value; } }
+        int price;
+        public int Price { get { return price; } set { price = value; } }
+        int number;
+        public int Number { get { return number; } set { number = value; } }
 
         DateTime date;
 
-        public Transportation() : base()
+        public Consignment() : base()
         {
-            price_2 = 100;
-            time = 30;
-            number = "AA1111BB";
-
+            price = 100;
+            number = 200;
         }
-        public Transportation(int price_, int time_, string number_, string name, string mark, int yaer, int price, int y, int m, int d) : base(name, mark, yaer, price)
+        public Consignment(int price_, int number_, string name, string country, int season, int y, int m, int d) : base(name, country, season)
         {
-            price_2 = price_;
-            time = time_;
+            price = price_;
             number = number_;
-            //date = new DateTime(y, m, d);
+            date = new DateTime(y, m, d);
         }
 
         override public string ToString()
         {
-            return base.ToString() + " " + price_2 + "$ (" + time + ")min " + number + " " + date.ToString();
+            return base.ToString() + " " + price + "$ (" + number + ") of " + date.ToString();
         }
 
         override public void print()
@@ -116,18 +99,16 @@ namespace ConsoleApp1
             Console.Write(number + " of " + name);
         }
 
-        public static Transportation operator +(Transportation c1, Transportation c2)
+        public static Consignment operator +(Consignment c1, Consignment c2)
         {
-            if (c1 as Car != c2 as Car)
-                return new Transportation
+            if (c1 as Vegetable == c2 as Vegetable)
+                return new Consignment
                 {
-                    price_2 = c1.price_2 + c2.price_2,
-                    time = c1.time + c2.time,
-                    number = c1.number,
+                    price = c1.price + c2.price,
+                    number = c1.number + c2.number,
                     name = c1.name,
-                    mark = c1.mark,
-                    year = c1.year,
-                    price = c1.price,
+                    country = c1.country,
+                    season = c1.season,
                     date = c1.date
                 };
             return c1;
@@ -137,42 +118,41 @@ namespace ConsoleApp1
         {
             if (obj == null)
                 return 1;
-            Transportation c = obj as Transportation;
-            if (c as Transportation == null)
+            Consignment c = obj as Consignment;
+            if (c as Consignment == null)
                 return 1;
-            return (this.price_2 - c.price_2);
+            return (this.price - c.price);
         }
 
-        public static bool operator <(Transportation c1, Transportation c2)
+        public static bool operator <(Consignment c1, Consignment c2)
         {
             return (c1.CompareTo(c2) < 0);
         }
-        public static bool operator >(Transportation c1, Transportation c2)
+        public static bool operator >(Consignment c1, Consignment c2)
         {
             return (c1.CompareTo(c2) > 0);
         }
     }
 
-    class Rental
+    class Warehouse
     {
-        protected string name_2;
-        public string Name_2 { get { return name_2; } set { name_2 = value; } }
-        Transportation[] array;
+        int rental_price;
+        Consignment[] array;
         int num;
 
-        public Rental()
+        public Warehouse()
         {
-            name_2 = "KPI";
+            rental_price = 1000;
             num = 5;
-            array = new Transportation[num];
+            array = new Consignment[num];
             for (int i = 0; i < num; i++)
             {
                 Random rand = new Random();
-                array[i] = new Transportation(rand.Next(900), rand.Next(867), "BB4465BB", "GAZ", "BUSUC", 1975, 400, 2019, rand.Next(12), rand.Next(30));
+                array[i] = new Consignment(rand.Next(900), rand.Next(867), "potato", "Egypt", rand.Next(3), 2019, rand.Next(12), rand.Next(30));
             }
         }
 
-        public Transportation this[int number]
+        public Consignment this[int number]
         {
             get
             {
@@ -182,40 +162,39 @@ namespace ConsoleApp1
         }
 
     }
-
     class Program
     {
         static void Main(string[] args)
         {
-            Console.Write("Car c: ");
-            Car c = new Car("CCCCC", "AUDI", 2011, 5000);
-            c.print();
-            Console.Write("\nCopy of c: ");
-            Car c_copy = c;
-            c_copy.print();
+            Console.Write("Vegetable v: ");
+            Vegetable v = new Vegetable("Carrot", "France", 2);
+            v.print();
+            Console.Write("\nCopy of v: ");
+            Vegetable v_copy = v;
+            v_copy.print();
 
-            Transportation t1 = new Transportation(250, 10, "AA1010CC", "BBBBB", "Shkoda", 1999, 1000, 2019, 12, 11);
-            Transportation t2 = new Transportation(150, 45, "BH6584CA", "CCCCC", "TOYOTA", 2015, 2000, 2019, 12, 13);
-            Console.WriteLine("\n\nT1: " + t1.ToString() + "\nT2: " + t2.ToString());
-            Console.Write("Enter a new price for T2: ");
-            t2.Price = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("t1>t2: " + (t1 > t2).ToString());
+            Consignment c1 = new Consignment(250, 10, "Cabbage", "USA", 1, 2019, 12, 11);
+            Consignment c2 = new Consignment(350, 45, "Cabbage", "USA", 1, 2019, 12, 13);
+            Console.WriteLine("\n\nC1: " + c1.ToString() + "\nC2: " + c2.ToString());
+            Console.Write("Enter a new price for c2: ");
+            c2.Price = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("c1>c2: " + (c1 > c2).ToString());
 
-            Transportation t3 = new Transportation();
-            Console.Write("\nDefault Transportation t3: " + t3.ToString());
-            t3 = t1 + t2;
-            Console.Write("\nt3=t1+t2: ");
-            t3.print();
+            Consignment c3 = new Consignment();
+            Console.Write("\nDefault Consignment c3: " + c3.ToString());
+            c3 = c1 + c2;
+            Console.Write("\nc3=c1+c2: ");
+            c3.print();
 
-            Rental r = new Rental();
-            Console.Write("\n\nIndexator: Enter a number\n");
+            Warehouse Warehouse = new Warehouse();
+            Console.Write("\n\nIndexator: Enter a number(<5)\n");
             int i = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Rental[" + i.ToString() + "] : " + r[i].ToString());
+            Console.WriteLine("Warehouse[" + i.ToString() + "] : " + Warehouse[i].ToString());
 
-            Car[] arr = new Car[2];
-            arr[0] = c;
-            arr[1] = t1;
-            Console.Write("\n\narr[0] is Car, arr[1] is Transportation\n");
+            Vegetable[] arr = new Vegetable[2];
+            arr[0] = v;
+            arr[1] = c1;
+            Console.Write("\n\narr[0] is Vegetable, arr[1] is Consignment\n");
             Console.WriteLine("Virtual function:");
             Console.Write("arr[0]:"); arr[0].print();
             Console.Write("\narr[1]:"); arr[1].print();
